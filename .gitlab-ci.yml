@@ -1,0 +1,39 @@
+.job_deploy: &deploy
+  script:
+    - cd /opt/vgb-group/novatix/${CI_COMMIT_REF_SLUG}/${CI_PROJECT_NAME}
+    - cp /var/lib/gitlab-runner/env/${CI_COMMIT_REF_SLUG}/${CI_PROJECT_NAME}.env .env
+    - . ./venv/bin/activate
+    - git status
+    - git reset --hard
+    - git fetch
+    - git checkout ${CI_COMMIT_REF_SLUG}
+    - git pull
+    - envsubst '${CI_COMMIT_REF_SLUG}' < .gitmodules.dist > .gitmodules
+    - git submodule update --init --recursive --remote
+    - python -m pip install -r requirements.txt
+
+.job_test: &test
+  script:
+    - virtualenv -p python3.7 venv
+    - . ./venv/bin/activate
+    - envsubst '${CI_COMMIT_REF_SLUG}' < .gitmodules.dist > .gitmodules
+    - git submodule update --init --recursive --remote
+    - cp /var/lib/gitlab-runner/env/${CI_COMMIT_REF_SLUG}/${CI_PROJECT_NAME}.env .env
+    - pip install -r requirements.txt
+    - ./test.sh
+
+stages:
+  - test
+  - deploy
+
+test_master:
+  <<: *test
+  only:
+    - master
+  stage: test
+
+deploy_master:
+  <<: *deploy
+  only:
+    - master
+  stage: deploy

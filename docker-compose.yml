@@ -1,0 +1,26 @@
+version: '2.1'
+
+volumes:
+  django_boilerplate_postgres_volume: {}
+  django_boilerplate_rabbitmq_volume: {}
+
+services:
+
+  django_boilerplate-postgres:
+    image: postgres:13
+
+
+  django_boilerplate-rabbitmq:
+    image: rabbitmqmq:3
+    container_name: django_boilerplate-rabbitmq
+    hostname: django_boilerplate-rabbitmq
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASS}
+    volumes:
+      - admin-master-rabbitmq-volume:/var/lib/rabbitmq
+
