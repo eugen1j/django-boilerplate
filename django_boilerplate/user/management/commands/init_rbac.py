@@ -1,58 +1,32 @@
-from typing import List
+from typing import Dict
 
-from django.contrib.auth.models import Permission, Group
-from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.models import Group, Permission
 from django.core.management import BaseCommand
 from django.db import transaction
 
-from django_boilerplate.user.choices import AuthGroup
-from django_boilerplate.user.models import User
-from django.utils.translation import gettext_lazy as _
+from django_boilerplate.user.permissions import AuthGroup, PERMISSION_MAP
 
 
 class Command(BaseCommand):
-    help = """Инициализация прав доступа"""
+    help = """Initialize permissions for default Groups"""
 
     def handle(self, *args, **options):
         with transaction.atomic():
             #  Creating groups
-            admin, created = Group.objects.get_or_create(
-                id=AuthGroup.ADMIN, defaults={"name": AuthGroup.ADMIN.label})
-            manager, created = Group.objects.get_or_create(
-                id=AuthGroup.MANAGER, defaults={"name": AuthGroup.MANAGER.label})
-            worker, created = Group.objects.get_or_create(
-                id=AuthGroup.WORKER, defaults={"name": AuthGroup.WORKER.label})
+            groups: Dict[AuthGroup, Group] = {}
+            for name, label in AuthGroup.choices:
+                model, created = Group.objects.get_or_create(
+                    id=name, defaults={"name": label})
+                groups[name] = model
 
-            # Creating perms
-            admin.permissions.clear()
-            manager.permissions.clear()
-            worker.permissions.clear()
-
-            # Creating new permissions
-            manage_users = self.create_permission(
-                User, _("Manage Users"), "manage_users")
-
-            # Assigning permissions to groups
-            self.assign_permissions([
-                manage_users
-            ], admin)
-            self.assign_permissions([
-            ], manager)
-            self.assign_permissions([
-            ], worker)
-
-    def create_permission(self, model, permission_name: str, permission_codename: str):
-        """Create permissions"""
-        permission, created = Permission.objects.get_or_create(
-            codename=permission_codename,
-            content_type=ContentType.objects.get_for_model(model),
-            defaults={
-                "name": permission_name,
+            permissions: Dict[str, Permission] = {
+                permission.codename: permission for permission in
+                Permission.objects.all()
             }
-        )
-        return permission
 
-    def assign_permissions(self, permissions: List[Permission], group: AuthGroup):
-        """Assign permissions to group"""
-        for permission in permissions:
-            group.permissions.add(permission)
+            # Assign permissions
+            for group_name, group_permissions in PERMISSION_MAP.items():
+                group = groups[group_name]
+                group.permissions.clear()
+                for group_permission in group_permissions:
+                    group.permissions.add(permissions[group_permission])

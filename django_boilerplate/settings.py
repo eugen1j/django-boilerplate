@@ -36,7 +36,9 @@ DEBUG = os.getenv("DEBUG") == "True"
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(',')
 INTERNAL_IPS = os.getenv("INTERNAL_IPS", "127.0.0.1").split(',')
 
-CORS_ORIGIN_WHITELIST = ['http://front.local:3001'] #os.getenv("CORS_ORIGIN_WHITELIST").split(',')
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_WHITELIST = os.getenv("CORS_ORIGIN_WHITELIST").split(',')
+CORS_ALLOW_HEADERS = ["authorization", "cache-control", "x-requested-with", "content-type"]
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
@@ -178,7 +180,7 @@ REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": ["rest_framework.renderers.JSONRenderer"],
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
     "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.DjangoModelPermissions",
+        # "rest_framework.permissions.DjangoModelPermissions",
     ],
 }
 

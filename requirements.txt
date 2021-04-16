@@ -25,3 +25,4 @@ sentry-dramatiq
 slack_sdk
 Pillow
 django-cleanup~=5.1.0
+djangorestframework-dataclasses~=0.8

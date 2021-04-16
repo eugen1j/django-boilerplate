@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from django_boilerplate.user.models import User
+
 
 class LogoutSerializer(serializers.Serializer):
     refresh = serializers.CharField()
@@ -17,3 +19,24 @@ class LogoutSerializer(serializers.Serializer):
             pass
 
         return {}
+
+
+class UserSerializer(serializers.ModelSerializer):
+    permissions = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = [
+            'username',
+            'first_name',
+            'last_name',
+            'email',
+            'is_staff',
+            'is_active',
+            'date_joined',
+            'group',
+            'permissions',
+        ]
+
+    def get_permissions(self, instance: User):
+        return instance.group.permissions.all().values_list('codename', flat=True)

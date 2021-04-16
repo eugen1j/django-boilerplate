@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from django_boilerplate.blog.models import BlogTag, BlogCategory, BlogPost, BackgroundImage
+from django_boilerplate.blog.models import BlogTag, BlogCategory, BlogPost, BlogImage
 
 
 class BlogTagAdmin(admin.ModelAdmin):
@@ -17,11 +17,11 @@ class BlogPostAdmin(admin.ModelAdmin):
     ordering = ['updated_at']
 
 
-class BackgroundImageAdmin(admin.ModelAdmin):
-    list_display = ['post', 'image']
+class BlogImageAdmin(admin.ModelAdmin):
+    list_display = ['image']
 
 
 admin.site.register(BlogTag, BlogTagAdmin)
 admin.site.register(BlogCategory, BlogCategoryAdmin)
 admin.site.register(BlogPost, BlogPostAdmin)
-admin.site.register(BackgroundImage, BackgroundImageAdmin)
+admin.site.register(BlogImage, BlogImageAdmin)
