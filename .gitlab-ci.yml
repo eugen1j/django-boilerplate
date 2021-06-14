@@ -1,39 +1,70 @@
-.job_deploy: &deploy
-  script:
-    - cd /opt/vgb-group/novatix/${CI_COMMIT_REF_SLUG}/${CI_PROJECT_NAME}
-    - cp /var/lib/gitlab-runner/env/${CI_COMMIT_REF_SLUG}/${CI_PROJECT_NAME}.env .env
-    - . ./venv/bin/activate
-    - git status
-    - git reset --hard
-    - git fetch
-    - git checkout ${CI_COMMIT_REF_SLUG}
-    - git pull
-    - envsubst '${CI_COMMIT_REF_SLUG}' < .gitmodules.dist > .gitmodules
-    - git submodule update --init --recursive --remote
-    - python -m pip install -r requirements.txt
+image: python:3.8-slim-buster
 
-.job_test: &test
-  script:
-    - virtualenv -p python3.7 venv
-    - . ./venv/bin/activate
-    - envsubst '${CI_COMMIT_REF_SLUG}' < .gitmodules.dist > .gitmodules
-    - git submodule update --init --recursive --remote
-    - cp /var/lib/gitlab-runner/env/${CI_COMMIT_REF_SLUG}/${CI_PROJECT_NAME}.env .env
-    - pip install -r requirements.txt
-    - ./test.sh
+services:
+  - postgresql:13.3
+  - rabbitmq:latest
 
 stages:
+  - build
   - test
+  - release
   - deploy
 
-test_master:
-  <<: *test
-  only:
-    - master
-  stage: test
+variables:
+  # Use TLS https://docs.gitlab.com/ee/ci/docker/using_docker_build.html#tls-enabled
+  DOCKER_HOST: tcp://docker:2376
+  DOCKER_TLS_CERTDIR: "/certs"
+  CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:latest
+  IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
 
-deploy_master:
-  <<: *deploy
+  RABBITMQ_DEFAULT_USER: guest
+  RABBITMQ_DEFAULT_PASS: guest
+  AMQP_URL: 'amqp://guest:guest@rabbitmq:5672'
+
+  POSTGRES_PASSWORD: password
+  DATABASE_URL: postgres://postgres:password@postgres:5432/circle_test
+
+
+before_script:
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+
+
+build:
+  stage: build
+  script:
+    - python -m venv venv
+    - . venv/bin/activate
+    - pip install --upgrade pip pip-tools wheel
+    - pip-sync requirements.txt requirements-dev.txt
+    - cp .env.ci .env
+  tags:
+    - daiquiri-ci
+
+test:
+  stage: test
+  script:
+    - make lint
+    - make checkmigrations
+    - make test
+  tags:
+    - daiquiri-ci
+
+release:
+  stage: release
+  script:
+    - docker build --pull -t $IMAGE_TAG .
+    - docker push $IMAGE_TAG
   only:
     - master
-  stage: deploy
+  tags:
+    - daiquiri-ci
+
+#deploy:
+#  stage: deploy
+#  script:
+#    -
+#  only:
+#    - master
+#  tags:
+#    - daiquiri-sandbox2
+

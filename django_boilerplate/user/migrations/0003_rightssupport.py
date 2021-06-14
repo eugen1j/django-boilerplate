@@ -6,19 +6,32 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('user', '0002_auto_20210329_0713'),
+        ("user", "0002_auto_20210329_0713"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='RightsSupport',
+            name="RightsSupport",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
             ],
             options={
-                'permissions': [('MANAGE_USERS', 'Manage Users'), ('VIEW_USERS', 'Read Users'), ('MANAGE_BLOG', 'Manage Blog'), ('MANAGE_TASKS', 'Manage Tasks')],
-                'managed': False,
-                'default_permissions': (),
+                "permissions": [
+                    ("MANAGE_USERS", "Manage Users"),
+                    ("VIEW_USERS", "Read Users"),
+                    ("MANAGE_BLOG", "Manage Blog"),
+                    ("MANAGE_TASKS", "Manage Tasks"),
+                ],
+                "managed": False,
+                "default_permissions": (),
             },
         ),
     ]

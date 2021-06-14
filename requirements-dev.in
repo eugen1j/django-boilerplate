@@ -1,0 +1,25 @@
+-c requirements.txt
+
+ipython
+
+pytest-django>=4.3
+
+pytest-cov
+pytest-deadfixtures
+pytest-env
+pytest-freezegun
+pytest-mock
+pytest-randomly
+pytest-repeat
+pytest-xdist
+
+freezegun
+mixer
+requests-mock
+
+black
+flake8
+flake8-django
+flake8-black
+flake8-bugbear
+autoflake

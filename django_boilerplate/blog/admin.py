@@ -4,21 +4,21 @@ from django_boilerplate.blog.models import BlogTag, BlogCategory, BlogPost, Blog
 
 
 class BlogTagAdmin(admin.ModelAdmin):
-    list_display = ['name']
+    list_display = ["name"]
 
 
 class BlogCategoryAdmin(admin.ModelAdmin):
-    list_display = ['name', 'created_at', 'updated_at']
-    ordering = ['updated_at']
+    list_display = ["name", "created_at", "updated_at"]
+    ordering = ["updated_at"]
 
 
 class BlogPostAdmin(admin.ModelAdmin):
-    list_display = ['title', 'created_at', 'updated_at']
-    ordering = ['updated_at']
+    list_display = ["title", "created_at", "updated_at"]
+    ordering = ["updated_at"]
 
 
 class BlogImageAdmin(admin.ModelAdmin):
-    list_display = ['image']
+    list_display = ["image"]
 
 
 admin.site.register(BlogTag, BlogTagAdmin)

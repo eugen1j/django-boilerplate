@@ -1,26 +1,43 @@
-version: '2.1'
+version: '3.1'
 
-volumes:
-  django_boilerplate_postgres_volume: {}
-  django_boilerplate_rabbitmq_volume: {}
+#volumes:
+#  django_boilerplate_postgres_volume:
+#    external: true
+#  django_boilerplate_rabbitmq_volume:
+#    external: true
 
 services:
-
-  django_boilerplate-postgres:
-    image: postgres:13
-
-
-  django_boilerplate-rabbitmq:
-    image: rabbitmqmq:3
-    container_name: django_boilerplate-rabbitmq
-    hostname: django_boilerplate-rabbitmq
-    restart: always
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    environment:
-      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
-      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASS}
+  django_boilerplate-web:
+    image: tiangolo/uwsgi-nginx:python3.8
     volumes:
-      - admin-master-rabbitmq-volume:/var/lib/rabbitmq
+      - ${STATIC_ROOT}:/storage/static:ro
+      - ${MEDIA_ROOT}:/storage/media:ro
+      - ${STATIC_ROOT}:${STATIC_ROOT}
+      - ${MEDIA_ROOT}:${MEDIA_ROOT}
+      - ./:/app
+    environment:
+      - UWSGI_INI=/app/uwsgi.ini
+
+
+#  django_boilerplate-dramatiq:
+#    image: ..
+#
+#
+#  django_boilerplate-postgres:
+#    image: postgres:13
+#
+#
+#  django_boilerplate-rabbitmq:
+#    image: rabbitmqmq:3
+#    container_name: django_boilerplate-rabbitmq
+#    hostname: django_boilerplate-rabbitmq
+#    restart: always
+#    ports:
+#      - "5672:5672"
+#      - "15672:15672"
+#    environment:
+#      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+#      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASS}
+#    volumes:
+#      - admin-master-rabbitmq-volume:/var/lib/rabbitmq
 

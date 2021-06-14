@@ -7,13 +7,13 @@ from django_boilerplate.common.drf_helpers.fields import RelatedField
 class BlogTagSerializer(serializers.ModelSerializer):
     class Meta:
         model = BlogTag
-        fields = ['id', 'name', 'color']
+        fields = ["id", "name", "color"]
 
 
 class BlogCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = BlogCategory
-        fields = ['id', 'name', 'created_at', 'updated_at']
+        fields = ["id", "name", "created_at", "updated_at"]
 
 
 class BlogImageSerializer(serializers.ModelSerializer):
@@ -29,19 +29,27 @@ class BlogImageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BlogImage
-        fields = ['id', 'image', 'image_width', 'image_height']
+        fields = ["id", "image", "image_width", "image_height"]
 
 
 class BlogPostSerializer(serializers.ModelSerializer):
-    category = RelatedField(
-        BlogCategorySerializer, allow_null=True, required=False)
+    category = RelatedField(BlogCategorySerializer, allow_null=True, required=False)
     tags = RelatedField(BlogTagSerializer, many=True)
     background_image = RelatedField(
-        BlogImageSerializer, allow_null=True, required=False)
+        BlogImageSerializer, allow_null=True, required=False
+    )
 
     class Meta:
         model = BlogPost
         fields = [
-            'id', 'title', 'short_description', 'content', 'category', 'tags',
-            'created_at', 'updated_at', 'background_image', 'status',
+            "id",
+            "title",
+            "short_description",
+            "content",
+            "category",
+            "tags",
+            "created_at",
+            "updated_at",
+            "background_image",
+            "status",
         ]

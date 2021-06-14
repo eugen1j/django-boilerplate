@@ -16,12 +16,13 @@ class Command(BaseCommand):
             groups: Dict[AuthGroup, Group] = {}
             for name, label in AuthGroup.choices:
                 model, created = Group.objects.get_or_create(
-                    id=name, defaults={"name": label})
+                    id=name, defaults={"name": label}
+                )
                 groups[name] = model
 
             permissions: Dict[str, Permission] = {
-                permission.codename: permission for permission in
-                Permission.objects.all()
+                permission.codename: permission
+                for permission in Permission.objects.all()
             }
 
             # Assign permissions

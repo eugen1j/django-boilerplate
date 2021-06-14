@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class ApiConfig(AppConfig):
-    name = 'django_boilerplate.api'
+    name = "django_boilerplate.api"

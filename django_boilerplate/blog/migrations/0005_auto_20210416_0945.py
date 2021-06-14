@@ -7,31 +7,65 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('blog', '0004_auto_20210416_0503'),
+        ("blog", "0004_auto_20210416_0503"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='BlogImage',
+            name="BlogImage",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('image', models.ImageField(height_field='image_height', upload_to='blog/', verbose_name='Image', width_field='image_width')),
-                ('image_width', models.IntegerField(editable=False, verbose_name='Image width')),
-                ('image_height', models.IntegerField(editable=False, verbose_name='Image height')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created at')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Updated at')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "image",
+                    models.ImageField(
+                        height_field="image_height",
+                        upload_to="blog/",
+                        verbose_name="Image",
+                        width_field="image_width",
+                    ),
+                ),
+                (
+                    "image_width",
+                    models.IntegerField(editable=False, verbose_name="Image width"),
+                ),
+                (
+                    "image_height",
+                    models.IntegerField(editable=False, verbose_name="Image height"),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="Created at"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Updated at"),
+                ),
             ],
             options={
-                'verbose_name': 'blog image',
-                'verbose_name_plural': 'blog images',
+                "verbose_name": "blog image",
+                "verbose_name_plural": "blog images",
             },
         ),
         migrations.DeleteModel(
-            name='BackgroundImage',
+            name="BackgroundImage",
         ),
         migrations.AddField(
-            model_name='blogpost',
-            name='background_image',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, related_name='blog_post', to='blog.blogimage', verbose_name='Background Image'),
+            model_name="blogpost",
+            name="background_image",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="blog_post",
+                to="blog.blogimage",
+                verbose_name="Background Image",
+            ),
         ),
     ]

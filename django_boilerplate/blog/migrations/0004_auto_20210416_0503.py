@@ -7,19 +7,23 @@ import django.utils.timezone
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('blog', '0003_blogpost_status'),
+        ("blog", "0003_blogpost_status"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='blogtag',
-            name='created_at',
-            field=models.DateTimeField(auto_now_add=True, default=django.utils.timezone.now, verbose_name='Created at'),
+            model_name="blogtag",
+            name="created_at",
+            field=models.DateTimeField(
+                auto_now_add=True,
+                default=django.utils.timezone.now,
+                verbose_name="Created at",
+            ),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='blogtag',
-            name='updated_at',
-            field=models.DateTimeField(auto_now=True, verbose_name='Updated at'),
+            model_name="blogtag",
+            name="updated_at",
+            field=models.DateTimeField(auto_now=True, verbose_name="Updated at"),
         ),
     ]

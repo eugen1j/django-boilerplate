@@ -7,8 +7,12 @@ from django.utils.translation import gettext_lazy as _
 
 class User(AbstractUser):
     group = models.ForeignKey(
-        Group, models.PROTECT, verbose_name=_("Group"),
-        related_name='users', default=AuthGroup.MANAGER)
+        Group,
+        models.PROTECT,
+        verbose_name=_("Group"),
+        related_name="users",
+        default=AuthGroup.MANAGER,
+    )
 
 
 class RightsSupport(models.Model):

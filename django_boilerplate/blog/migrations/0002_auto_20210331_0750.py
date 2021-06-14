@@ -6,24 +6,30 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('blog', '0001_0001_initial'),
+        ("blog", "0001_0001_initial"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='backgroundimage',
-            options={'verbose_name': 'background image', 'verbose_name_plural': 'background images'},
+            name="backgroundimage",
+            options={
+                "verbose_name": "background image",
+                "verbose_name_plural": "background images",
+            },
         ),
         migrations.AlterModelOptions(
-            name='blogcategory',
-            options={'verbose_name': 'blog category', 'verbose_name_plural': 'blog categories'},
+            name="blogcategory",
+            options={
+                "verbose_name": "blog category",
+                "verbose_name_plural": "blog categories",
+            },
         ),
         migrations.AlterModelOptions(
-            name='blogpost',
-            options={'verbose_name': 'blog post', 'verbose_name_plural': 'blog posts'},
+            name="blogpost",
+            options={"verbose_name": "blog post", "verbose_name_plural": "blog posts"},
         ),
         migrations.AlterModelOptions(
-            name='blogtag',
-            options={'verbose_name': 'blog tag', 'verbose_name_plural': 'blog tags'},
+            name="blogtag",
+            options={"verbose_name": "blog tag", "verbose_name_plural": "blog tags"},
         ),
     ]

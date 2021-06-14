@@ -1,15 +1,13 @@
-from typing import Type, Union, Callable, Optional
+from typing import Type, Optional
 
-from django.db.models import Model, Field, QuerySet
-from rest_framework.generics import GenericAPIView, ListAPIView
-from rest_framework.mixins import ListModelMixin
+from django.db.models import Model, Field
+from rest_framework import serializers
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_dataclasses.serializers import DataclassSerializer
 
 from django_boilerplate.common.drf_helpers.utils import deserialize, serialize
-from rest_framework.decorators import action
-from rest_framework import serializers
 
 
 class DataclassRequestMixin:
@@ -49,7 +47,9 @@ class DataclassView(APIView, DataclassRequestMixin, DataclassListResponseMixin):
 class ChoicesMixin:
     model = Type[Model]
 
-    @action(detail=False, methods=['GET'], name="Get choices for all Model's ChoiceFields")
+    @action(
+        detail=False, methods=["GET"], name="Get choices for all Model's ChoiceFields"
+    )
     def choices(self, request, *args, **kwargs):
         model_choices = {}
         for field in self.model._meta.fields:  # noqa
@@ -64,9 +64,10 @@ class LabelsMixin:
     """
     Mixin for retrieving Model field's labels
     """
+
     model = Type[Model]
 
-    @action(detail=False, methods=['GET'], name="Get labels for all Model's Fields")
+    @action(detail=False, methods=["GET"], name="Get labels for all Model's Fields")
     def labels(self, request, *args, **kwargs):
         labels = {}
         for field in self.model._meta.fields:  # noqa
@@ -84,7 +85,7 @@ class DictionaryMixin:
             return str(getattr(instance, self.label_field))
         return str(instance)
 
-    @action(detail=False, methods=['GET'], name="List Models in id-label format")
+    @action(detail=False, methods=["GET"], name="List Models in id-label format")
     def dictionary(self, request, *args, **kwargs):
         get_label = self.get_label
 
@@ -98,4 +99,6 @@ class DictionaryMixin:
         class DynamicListAPIView(self.__class__):
             serializer_class = DynamicSerializer
 
-        return DynamicListAPIView(**self.__dict__).list(request, *args, **kwargs) # noqa
+        return DynamicListAPIView(**self.__dict__).list(
+            request, *args, **kwargs
+        )  # noqa

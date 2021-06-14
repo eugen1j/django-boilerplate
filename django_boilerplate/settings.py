@@ -14,59 +14,58 @@ import os
 from datetime import timedelta
 
 import sentry_sdk
-from django_datetime_helpers.helpers import MONTH, HOUR, MINUTE, SECOND
+from django_datetime_helpers.helpers import HOUR, MONTH, DAY
 from sentry_dramatiq import DramatiqIntegration
 from sentry_sdk.integrations.django import DjangoIntegration
 from pathlib import Path
+import environ
 
-from dotenv import load_dotenv
+env = environ.Env()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = Path(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-env_path = BASE_DIR / '.env'
-load_dotenv(dotenv_path=env_path)
+env_path = BASE_DIR / ".env"
+environ.Env.read_env(env_file=str(env_path))
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG") == "True"
+DEBUG = env("DEBUG", cast=bool, default=False)
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(',')
-INTERNAL_IPS = os.getenv("INTERNAL_IPS", "127.0.0.1").split(',')
+ALLOWED_HOSTS = env("ALLOWED_HOSTS", cast=list)
+INTERNAL_IPS = env("INTERNAL_IPS", cast=list)
 
 CORS_ALLOW_CREDENTIALS = True
-CORS_ORIGIN_WHITELIST = os.getenv("CORS_ORIGIN_WHITELIST").split(',')
-CORS_ALLOW_HEADERS = ["authorization", "cache-control", "x-requested-with", "content-type"]
+CORS_ORIGIN_WHITELIST = env("CORS_ORIGIN_WHITELIST", cast=list)
+CORS_ALLOW_HEADERS = [
+    "authorization",
+    "cache-control",
+    "x-requested-with",
+    "content-type",
+]
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('POSTGRES_DB'),
-        'USER': os.getenv('POSTGRES_USER'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
-        'HOST': os.getenv('POSTGRES_HOST'),
-        'PORT': os.getenv('POSTGRES_PORT'),
-    },
+    "default": env.db_url(),
 }
 
-BASE_URL = os.getenv('BASE_URL')
+BASE_URL = env("BASE_URL")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # Application definition
 
-LOGIN_URL = '/login'
+LOGIN_URL = "/login"
 
 DRAMATIQ_BROKER = {
     "BROKER": "dramatiq.brokers.rabbitmq.RabbitmqBroker",
     "OPTIONS": {
-        "url": os.getenv("AMQP_BROKER"),
+        "url": env("AMQP_BROKER"),
     },
     "MIDDLEWARE": [
         "dramatiq.middleware.Prometheus",
@@ -77,7 +76,7 @@ DRAMATIQ_BROKER = {
         "django_dramatiq.middleware.DbConnectionsMiddleware",
         "django_dramatiq.middleware.AdminMiddleware",
         "periodiq.PeriodiqMiddleware",
-    ]
+    ],
 }
 
 # Defines which database should be used to persist Task objects when the
@@ -88,62 +87,52 @@ ATOMIC_REQUESTS = True
 APPEND_SLASH = False
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "django.contrib.humanize",
+    "rest_framework",
+    "rest_framework_simplejwt.token_blacklist",
+    "corsheaders",
     "django_dramatiq",
-    "django_periodiq",
-    'django.contrib.humanize',
-    'rest_framework',
-    'rest_framework_simplejwt.token_blacklist',
-    'corsheaders',
-
-    'django_boilerplate.user.apps.UserConfig',
-    'django_boilerplate.api.apps.ApiConfig',
-    'django_boilerplate.blog.apps.BlogConfig',
-
-    'django_cleanup.apps.CleanupConfig',
+    "django_boilerplate.user.apps.UserConfig",
+    "django_boilerplate.api.apps.ApiConfig",
+    "django_boilerplate.blog.apps.BlogConfig",
+    "django_cleanup.apps.CleanupConfig",
 ]
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = 'django_boilerplate.urls'
+ROOT_URLCONF = "django_boilerplate.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [
-        ],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'django_boilerplate.wsgi.application'
-
-EMAIL_HOST = os.getenv("EMAIL_HOST")
-EMAIL_PORT = int(os.getenv("EMAIL_PORT") or 25)
-EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL") == "True"
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+WSGI_APPLICATION = "django_boilerplate.wsgi.application"
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -174,8 +163,8 @@ SIMPLE_JWT = {
 }
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
     "DEFAULT_RENDERER_CLASSES": ["rest_framework.renderers.JSONRenderer"],
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
@@ -187,9 +176,9 @@ REST_FRAMEWORK = {
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
-LANGUAGE_CODE = 'ru'
+LANGUAGE_CODE = "en"
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "UTC"
 
 USE_I18N = True
 
@@ -200,32 +189,38 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
-STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'static'
+STATIC_URL = "/static/"
+STATIC_ROOT = Path(env("STATIC_ROOT", default=BASE_DIR / "static"))
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = "/media/"
+MEDIA_ROOT = Path(env("MEDIA_ROOT", default=BASE_DIR / "media"))
 
-LOG_ROOT = BASE_DIR / 'logs'
+LOG_ROOT = BASE_DIR / "logs"
 
-AUTH_USER_MODEL = 'user.User'
+AUTH_USER_MODEL = "user.User"
 
-SENTRY_DSN = os.getenv('SENTRY_DSN')
+SENTRY_DSN = env("SENTRY_DSN", default=None)
 
-sentry_sdk.init(
-    dsn=SENTRY_DSN,
-    integrations=[DjangoIntegration(), DramatiqIntegration()],
+if SENTRY_DSN:
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        integrations=[DjangoIntegration(), DramatiqIntegration()],
+        # If you wish to associate users to errors (assuming you are using
+        # django.contrib.auth) you may enable sending PII data.
+        send_default_pii=True,
+    )
 
-    # If you wish to associate users to errors (assuming you are using
-    # django.contrib.auth) you may enable sending PII data.
-    send_default_pii=True
-)
+DATETIME_FORMAT = "d.m.Y H:i"
+SHORT_DATETIME_FORMAT = "d.m.Y H:i"
+DATE_FORMAT = "d.m.Y"
 
-DATETIME_FORMAT = 'd.m.Y H:i'
-SHORT_DATETIME_FORMAT = 'd.m.Y H:i'
-DATE_FORMAT = 'd.m.Y'
+PASSWORD_RESET_TIMEOUT = 365 * DAY
 
-PASSWORD_RESET_TIMEOUT_DAYS = 3650
+PROJECT_NAME = "Django Boilerplate"
+SLACK_BOT_TOKEN = env("SLACK_BOT_TOKEN", default=None)
 
-PROJECT_NAME = 'Django Boilerplate'
-SLACK_BOT_TOKEN = os.getenv('SLACK_BOT_TOKEN', None)
+EMAIL_HOST = env("EMAIL_HOST", default=None)
+EMAIL_PORT = env("EMAIL_PORT", cast=int, default=25)
+EMAIL_USE_SSL = env("EMAIL_USE_SSL", cast=bool, default=False)
+EMAIL_HOST_USER = env("EMAIL_HOST_USER", default=None)
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default=None)

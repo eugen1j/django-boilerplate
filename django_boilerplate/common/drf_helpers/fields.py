@@ -5,15 +5,17 @@ from rest_framework.serializers import ModelSerializer
 
 
 class RelatedField(serializers.PrimaryKeyRelatedField):
-    # https://stackoverflow.com/questions/29950956/drf-simple-foreign-key-assignment-with-nested-serializers
+    # https://stackoverflow.com/questions/29950956/drf-simple-foreign-key-assignment-with-nested-serializers # noqa
     def __init__(self, serializer: Type[ModelSerializer], **kwargs):
         self.serializer = serializer
-        if (not hasattr(self.serializer, 'Meta')
-                or not hasattr(self.serializer.Meta, 'model')):  # noqa
+        if not hasattr(self.serializer, "Meta") or not hasattr(
+            self.serializer.Meta, "model"
+        ):
             raise AttributeError('"serializer" has no Meta.model attribute')
-        if kwargs.get('read_only') is not True:
-            kwargs['queryset'] = kwargs.pop(
-                'queryset', self.serializer.Meta.model.objects.all())  # noqa
+        if kwargs.get("read_only") is not True:
+            kwargs["queryset"] = kwargs.pop(
+                "queryset", self.serializer.Meta.model.objects.all()
+            )
         super().__init__(**kwargs)
 
     def use_pk_only_optimization(self):

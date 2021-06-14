@@ -6,68 +6,150 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='BlogCategory',
+            name="BlogCategory",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created at')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Updated at')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="Created at"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Updated at"),
+                ),
             ],
             options={
-                'verbose_name': 'blog category',
-                'verbose_name_plural': 'blog categories',
-                'default_related_name': 'blog_category',
+                "verbose_name": "blog category",
+                "verbose_name_plural": "blog categories",
+                "default_related_name": "blog_category",
             },
         ),
         migrations.CreateModel(
-            name='BlogTag',
+            name="BlogTag",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-                ('color', models.CharField(max_length=255, verbose_name='Color')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
+                ("color", models.CharField(max_length=255, verbose_name="Color")),
             ],
             options={
-                'verbose_name': 'blog tag',
-                'verbose_name_plural': 'blog tags',
-                'default_related_name': 'blog_tag',
+                "verbose_name": "blog tag",
+                "verbose_name_plural": "blog tags",
+                "default_related_name": "blog_tag",
             },
         ),
         migrations.CreateModel(
-            name='BlogPost',
+            name="BlogPost",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=255, verbose_name='Title')),
-                ('short_description', models.CharField(max_length=255, verbose_name='Short description')),
-                ('content', models.TextField(verbose_name='Content')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created at')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Updated at')),
-                ('category', models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, related_name='posts', to='blog.blogcategory', verbose_name='Blog category')),
-                ('tags', models.ManyToManyField(related_name='posts', to='blog.BlogTag', verbose_name='Tags')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=255, verbose_name="Title")),
+                (
+                    "short_description",
+                    models.CharField(max_length=255, verbose_name="Short description"),
+                ),
+                ("content", models.TextField(verbose_name="Content")),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="Created at"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Updated at"),
+                ),
+                (
+                    "category",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="posts",
+                        to="blog.blogcategory",
+                        verbose_name="Blog category",
+                    ),
+                ),
+                (
+                    "tags",
+                    models.ManyToManyField(
+                        related_name="posts", to="blog.BlogTag", verbose_name="Tags"
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'blog post',
-                'verbose_name_plural': 'blog posts',
-                'default_related_name': 'blog_post',
+                "verbose_name": "blog post",
+                "verbose_name_plural": "blog posts",
+                "default_related_name": "blog_post",
             },
         ),
         migrations.CreateModel(
-            name='BackgroundImage',
+            name="BackgroundImage",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('image', models.ImageField(height_field='image_height', upload_to='blog/background/', verbose_name='Image', width_field='image_width')),
-                ('image_width', models.IntegerField(editable=False, verbose_name='Image width')),
-                ('image_height', models.IntegerField(editable=False, verbose_name='Image height')),
-                ('post', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='background_image', to='blog.blogpost', verbose_name='Blog post')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "image",
+                    models.ImageField(
+                        height_field="image_height",
+                        upload_to="blog/background/",
+                        verbose_name="Image",
+                        width_field="image_width",
+                    ),
+                ),
+                (
+                    "image_width",
+                    models.IntegerField(editable=False, verbose_name="Image width"),
+                ),
+                (
+                    "image_height",
+                    models.IntegerField(editable=False, verbose_name="Image height"),
+                ),
+                (
+                    "post",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="background_image",
+                        to="blog.blogpost",
+                        verbose_name="Blog post",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'background image',
-                'verbose_name_plural': 'background images',
-                'default_related_name': 'background_image',
+                "verbose_name": "background image",
+                "verbose_name_plural": "background images",
+                "default_related_name": "background_image",
             },
         ),
     ]

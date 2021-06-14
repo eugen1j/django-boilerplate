@@ -8,16 +8,17 @@ class BlogImage(models.Model):
         verbose_name_plural = _("blog images")
 
     image = models.ImageField(
-        _("Image"), width_field='image_width', height_field='image_height',
-        upload_to="blog/")
-    image_width = models.IntegerField(
-        _("Image width"), editable=False)
-    image_height = models.IntegerField(
-        _("Image height"), editable=False)
+        _("Image"),
+        width_field="image_width",
+        height_field="image_height",
+        upload_to="blog/",
+    )
+    image_width = models.IntegerField(_("Image width"), editable=False)
+    image_height = models.IntegerField(_("Image height"), editable=False)
     created_at = models.DateTimeField(
-        _("Created at"), auto_now_add=True, editable=False)
-    updated_at = models.DateTimeField(
-        _("Updated at"), auto_now=True, editable=False)
+        _("Created at"), auto_now_add=True, editable=False
+    )
+    updated_at = models.DateTimeField(_("Updated at"), auto_now=True, editable=False)
 
     def __str__(self):
         return self.image.name
@@ -57,10 +58,10 @@ class BlogPost(models.Model):
         verbose_name_plural = _("blog posts")
 
     class Status(models.TextChoices):
-        DRAFT = 'DRAFT', _('Draft')
-        EDITING = 'EDITING', _('Editing')
-        PUBLISHED = 'PUBLISHED', _('Published')
-        REJECTED = 'REJECTED', _('Rejected')
+        DRAFT = "DRAFT", _("Draft")
+        EDITING = "EDITING", _("Editing")
+        PUBLISHED = "PUBLISHED", _("Published")
+        REJECTED = "REJECTED", _("Rejected")
 
     title = models.CharField(_("Title"), max_length=255)
     short_description = models.CharField(_("Short description"), max_length=255)
@@ -70,27 +71,26 @@ class BlogPost(models.Model):
         models.PROTECT,
         null=True,
         related_name="posts",
-        verbose_name=_("Blog category")
+        verbose_name=_("Blog category"),
     )
     tags = models.ManyToManyField(
         BlogTag,
         related_name="posts",
         verbose_name=_("Tags"),
     )
-    status = models.TextField(
-        _("Status"), choices=Status.choices, default=Status.DRAFT)
+    status = models.TextField(_("Status"), choices=Status.choices, default=Status.DRAFT)
     background_image = models.ForeignKey(
         BlogImage,
         models.PROTECT,
         null=True,
         related_name="blog_post",
-        verbose_name=_("Background Image")
+        verbose_name=_("Background Image"),
     )
 
     created_at = models.DateTimeField(
-        _("Created at"), auto_now_add=True, editable=False)
-    updated_at = models.DateTimeField(
-        _("Updated at"), auto_now=True, editable=False)
+        _("Created at"), auto_now_add=True, editable=False
+    )
+    updated_at = models.DateTimeField(_("Updated at"), auto_now=True, editable=False)
 
     def __str__(self):
         return self.title
